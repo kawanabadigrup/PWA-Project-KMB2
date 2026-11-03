@@ -7,7 +7,7 @@ hanya layar; ia tidak pernah menghitung uang sendiri.
 ## Identitas sistem ini
 
 ```
-Web app    https://script.google.com/macros/s/AKfycbxh4086qGRZGDqAvdpO7UDdsvqk1Li9NR2rFZLlyVS6gS1zpGrZdcEsb_z-HzKOY02Y/exec
+Web app    https://script.google.com/macros/s/AKfycbykSslm5SFzAHRGJRLApDVNvR2JvZzW_Y3JEazdXaISJxADGlXwEWXHNg9pwpr4SJ73/exec
 Script     1EMxIxcP1NMqLyjaaFOMbldYBGDdF_mb0OCLjbd3In0PymjTAoUR2XLiM
 Spreadsheet 1_4dluYh821clhVeiUDn2B7auwFPNlTcB56_g4bhFi58
 Cache      mar-projek-v1

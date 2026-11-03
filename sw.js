@@ -1,4 +1,4 @@
-var CACHE = 'mar-projek-v14';
+var CACHE = 'mar-projek-v1';
 var ASSETS = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function(e) {
   // cache:'reload' — WAJIB. addAll() memakai cache HTTP biasa, jadi app.js bisa
@@ -38,7 +38,7 @@ self.addEventListener('activate', function(e) {
 // harus ditulis dua kali. Kalau kelak diisi, isi KEDUANYA — app.js dan berkas
 // ini — dengan URL yang sama. Kalau berbeda, halaman dan service worker akan
 // bicara ke dua sistem berlainan, dan gejalanya nyaris mustahil dibaca.
-var API_URL = 'https://script.google.com/macros/s/AKfycbxh4086qGRZGDqAvdpO7UDdsvqk1Li9NR2rFZLlyVS6gS1zpGrZdcEsb_z-HzKOY02Y/exec';
+var API_URL = 'https://script.google.com/macros/s/AKfycbykSslm5SFzAHRGJRLApDVNvR2JvZzW_Y3JEazdXaISJxADGlXwEWXHNg9pwpr4SJ73/exec';
 function swDb() {
   return new Promise(function(res, rej) {
     var r = indexedDB.open('mar_projek_v1', 1);

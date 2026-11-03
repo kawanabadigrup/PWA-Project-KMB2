@@ -12,13 +12,13 @@
 //
 // Untuk menjalankannya, buat deployment Apps Script Anda SENDIRI lalu isi di
 // sini. Isi juga API_URL di sw.js dengan nilai yang sama.
-var CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbxh4086qGRZGDqAvdpO7UDdsvqk1Li9NR2rFZLlyVS6gS1zpGrZdcEsb_z-HzKOY02Y/exec' };
+var CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbykSslm5SFzAHRGJRLApDVNvR2JvZzW_Y3JEazdXaISJxADGlXwEWXHNg9pwpr4SJ73/exec' };
 // SATU sumber kebenaran versi: nama CACHE di sw.js. Nilai di bawah hanya
 // cadangan bila Cache API tak tersedia — saat boot, versinya DIBACA dari cache
 // service worker yang benar-benar aktif (lihat syncVersionFromCache).
 // Dengan begitu rilis cukup mengubah CACHE di sw.js; angka di sini tak bisa lagi
 // tertinggal diam-diam seperti dulu (APP_VERSION v26 vs CACHE v34).
-var APP_VERSION = 'projek-v14'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
+var APP_VERSION = 'projek-v1'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
 
 // ── Pembaruan versi otomatis ────────────────────────────────────────────────
 // sw.js sudah skipWaiting()+clients.claim(), jadi versi baru mengambil alih
