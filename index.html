@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="theme-color" content="#4F633F">
+  <meta name="theme-color" content="#5E5E5E">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./icon-192.png">
   <!-- iOS: dukungan Add to Home Screen (Safari tidak baca manifest sepenuhnya) -->
@@ -17,12 +17,12 @@
     :root{
       --bg:#F8FAFC;--bg-secondary:#F3F4F6;--card:#FFFFFF;--border:#E5E7EB;
       --text:#111827;--text-secondary:#6B7280;--text-disabled:#9CA3AF;
-      --primary:#4F633F;--primary-hover:#384B2B;--primary-active:#223215;
-      --primary-soft:#EEFEDA;--primary-container:#D2E9BB;
+      --primary:#5E5E5E;--primary-hover:#474747;--primary-active:#2F2F2F;
+      --primary-soft:#F1F1F1;--primary-container:#E2E2E2;
       --success:#10B981;--warning:#F59E0B;--error:#EF4444;
       --input-border:#D1D5DB;--radius:16px;--radius-sm:10px;
       --shadow:0 4px 12px rgba(0,0,0,.05);--shadow-hover:0 8px 24px rgba(0,0,0,.08);
-      --focus-ring:0 0 0 3px rgba(79,99,63,.25);
+      --focus-ring:0 0 0 3px rgba(94,94,94,.25);
     }
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -208,13 +208,13 @@
     .syncbar button{flex:0 0 auto}
     .chkRow{display:flex;align-items:center;gap:6px;margin:6px 0;font-size:13px;color:var(--text)}
     .chkRow input[type="checkbox"]{width:18px;height:18px;accent-color:var(--primary)}
-    /* ── LAYAR LOGIN (port UX SUM V2; dipakai gradasi hijau zaitun, bukan foto.
+    /* ── LAYAR LOGIN (port UX SUM V2; dipakai gradasi abu-abu, bukan foto.
        Warnanya sengaja BEDA dari tema lain: dua sistem sewarna
        membuat orang salah memasukkan data ke sistem yang keliru.) ── */
     #screen-login.loginBg{
       position:fixed;top:0;left:0;right:0;bottom:0;max-width:none;margin:0;padding:20px 0;
       display:flex;align-items:center;justify-content:center;overflow-y:auto;z-index:20;
-      background:linear-gradient(160deg,#0F1F04 0%,#223215 45%,#4F633F 100%);
+      background:linear-gradient(160deg,#1C1C1C 0%,#2F2F2F 45%,#5E5E5E 100%);
     }
     /* margin:auto pada anak flex = benar-benar di tengah, dan tetap bisa di-scroll
        bila layar pendek / keyboard HP terbuka (tidak terpotong di atas). */
@@ -257,7 +257,7 @@
     .compact-wo-item.selected-wo-card {
       border: 2px solid var(--primary) !important;
       background: var(--primary-soft) !important;
-      box-shadow: 0 4px 14px rgba(79, 99, 63, 0.22) !important;
+      box-shadow: 0 4px 14px rgba(94, 94, 94, 0.22) !important;
     }
     .compact-card-header {
       display: flex;
@@ -294,7 +294,7 @@
       background: var(--card);
     }
     .compact-card-body:hover {
-      background: rgba(79, 99, 63, 0.03);
+      background: rgba(94, 94, 94, 0.03);
     }
     .c-col {
       display: flex;
@@ -447,7 +447,7 @@
     .compact-detail-pane {
       display: none;
       border-top: 1px solid var(--border);
-      background: #FAFDF7;
+      background: #FBFBFB;
       padding: 14px 16px;
       font-size: 12px;
       animation: fadeInDetail 0.2s ease;
@@ -550,7 +550,7 @@
     .card.selected-wo-card {
       border: 2px solid var(--primary) !important;
       background: var(--primary-soft) !important;
-      box-shadow: 0 4px 14px rgba(79, 99, 63, 0.22) !important;
+      box-shadow: 0 4px 14px rgba(94, 94, 94, 0.22) !important;
     }
     #bulkConfirmModal {
       align-items: flex-end;
@@ -754,7 +754,7 @@
       <p class="sub">Token dari admin, cukup diisi SEKALI.</p>
       <input class="inp" id="tokenInput" placeholder="token..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <button class="big" id="btnLogin" onclick="doLogin()">Masuk</button>
-      <div id="loginLoading" style="display:none;margin-top:10px;text-align:center;font-size:13px;font-weight:700;color:#3E4F32"><span class="spin"></span> Memeriksa token…</div>
+      <div id="loginLoading" style="display:none;margin-top:10px;text-align:center;font-size:13px;font-weight:700;color:#4C4C4C"><span class="spin"></span> Memeriksa token…</div>
     </div>
     </div>
   </div>
@@ -941,8 +941,8 @@
         <label>Keterangan (opsional)</label>
         <input class="inp" id="cKet" placeholder="cth: unit di pit 3">
       </div>
-      <div class="panel" id="cPreview" style="display:none;background:#F1F4EE;border-color:#C8D4BC;padding:11px;margin-bottom:10px">
-        <div class="sub" style="margin:0 0 4px;font-weight:700;color:#3E4F32">📊 Preview Poin</div>
+      <div class="panel" id="cPreview" style="display:none;background:#F3F3F3;border-color:#D1D1D1;padding:11px;margin-bottom:10px">
+        <div class="sub" style="margin:0 0 4px;font-weight:700;color:#4C4C4C">📊 Preview Poin</div>
         <div id="cPreviewBody" style="font-size:13px;color:#111827"></div>
       </div>
       <!-- Keranjang baris grup — hanya tampil saat mode grup dipilih -->

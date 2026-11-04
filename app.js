@@ -18,7 +18,7 @@ var CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbykSslm5SFzAHRG
 // service worker yang benar-benar aktif (lihat syncVersionFromCache).
 // Dengan begitu rilis cukup mengubah CACHE di sw.js; angka di sini tak bisa lagi
 // tertinggal diam-diam seperti dulu (APP_VERSION v26 vs CACHE v34).
-var APP_VERSION = 'projek-v1'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
+var APP_VERSION = 'projek-v2'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
 
 // ── Pembaruan versi otomatis ────────────────────────────────────────────────
 // sw.js sudah skipWaiting()+clients.claim(), jadi versi baru mengambil alih
@@ -549,7 +549,7 @@ function showSendProgress(idx, total, op) {
   if (!el) return;
   var label = op ? (opLabel(op) || '') : '';
   el.textContent = '📤 Mengirim ' + idx + '/' + total + (label ? ' · ' + label : '') + '…';
-  el.style.color = '#4F633F';
+  el.style.color = '#5E5E5E';
 }
 
 /* ── API ── */
@@ -2624,7 +2624,7 @@ function badgeFor(wo,pendingOp) {
     // 'done' TIDAK menimpa: pakai status asli WO agar berubah (Terkirim→L1→L2→Approved) setelah sync
   }
   var s=String(wo.status||'');
-  if (s==='pending_mechanic_work') return ['📝 Perlu diisi','#4F633F'];
+  if (s==='pending_mechanic_work') return ['📝 Perlu diisi','#5E5E5E'];
   if (s==='pending_supervisor') return ['⏳ L1','#7c3aed'];
   if (s==='pending_superintendent') return ['⏳ L2','#7c3aed'];
   if (s==='approved') return ['✅ Approved','#15803d'];
@@ -2704,7 +2704,7 @@ function renderMonitorTab(el) {
   // keterangan ini orang melihat angkanya turun dan mengira datanya hilang.
   var html = '<div class="card" style="padding:12px">'+
     '<b>Ringkasan scope Anda</b>'+
-    (ov.periode ? '<span class="badge" style="background:#4F633F;margin-left:6px">'+esc(ov.periode)+'</span>' : '')+
+    (ov.periode ? '<span class="badge" style="background:#5E5E5E;margin-left:6px">'+esc(ov.periode)+'</span>' : '')+
     '<div class="sub" style="margin-top:4px">'+
       '📝 Perlu diisi: <b>'+(ov.pending_mechanic_work||0)+'</b> · '+
       '⏳ L1: <b>'+(ov.pending_l1||0)+'</b> · '+
@@ -2751,7 +2751,7 @@ function salinToken(tok, btn) {
  * dipakai daripada gulir panjang yang menuntut mekanik memilah sendiri.
  */
 var BAGIAN_WO = [
-  {id:'aktif',    judul:'Perlu Dikerjakan', ikon:'🔧', warna:'#4F633F',
+  {id:'aktif',    judul:'Perlu Dikerjakan', ikon:'🔧', warna:'#5E5E5E',
    sub:'belum diisi / sedang dikerjakan', st:['pending_mechanic_work','in_progress']},
   {id:'transfer', judul:'Menunggu Transfer', ikon:'🔁', warna:'#c2410c',
    sub:'menunggu keputusan L1', st:['pending_transfer']},
@@ -2884,7 +2884,7 @@ function _kartuWo(daftar, opByWo, totalGrup, kirimGrup) {
       var totalG = gid ? (totalGrup[gid] || G.baris.length) : G.baris.length;
       html += '<div class="grupHead">'+
         '<div class="cardTop" style="margin-bottom:4px"><b>📦 '+judul+'</b>'+
-        '<span class="badge" style="background:#4F633F">'+(G.mode==='job'?'1 JOB · BANYAK UNIT':'1 UNIT · BANYAK JOB')+'</span></div>'+
+        '<span class="badge" style="background:#5E5E5E">'+(G.mode==='job'?'1 JOB · BANYAK UNIT':'1 UNIT · BANYAK JOB')+'</span></div>'+
         '<div class="cardBody">📍 '+esc(locLabel(w0.location))+' · Kondisi: '+esc(wcLabel(w0.work_condition))+
         timKerjaStr(w0.team)+
         // Kemajuan borongan: mekanik perlu tahu tinggal berapa lagi, bukan
@@ -3133,7 +3133,7 @@ var WARNA = {
   onTime:    '#15803d',   // hijau  — tepat waktu
   late:      '#c2410c',   // oranye — terlambat
   wayLate:   '#b91c1c',   // merah  — sangat terlambat
-  grup:      '#4F633F',   // tertiary green — bagian borongan
+  grup:      '#5E5E5E',   // abu tema — bagian borongan
   // Perhatian — "hal yang wajib disadari sebelum memutuskan"
   mekanik:   '#be185d',   // magenta — dibuat mekanik sendiri
   override:  '#4338ca',   // indigo  — angka sudah diubah approver
@@ -4171,7 +4171,7 @@ function renderActiveList(){
   var html='<div class="sub">'+S.active.length+' WO aktif — belum di-submit mekanik</div>';
   S.active.forEach(function(wo){
     var othersBadge = wo.is_others ? '<span class="badge" style="background:'+WARNA.others+'">Others</span>' : '';
-    html+='<div class="card"><div class="cardTop"><b>'+esc(wo.wo_number)+'</b><span class="badge" style="background:#4F633F">📝 Belum diisi</span>'+
+    html+='<div class="card"><div class="cardTop"><b>'+esc(wo.wo_number)+'</b><span class="badge" style="background:#5E5E5E">📝 Belum diisi</span>'+
       (wo.section?'<span class="badge" style="background:#334155">'+esc(wo.section)+'</span>':'')+othersBadge+'</div>'+
       // Label–nilai sejajar, sama seperti kartu approval. Unit WAJIB ada:
       // tanpa itu approver tahu pekerjaannya apa tapi tidak tahu di alat mana.
