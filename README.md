@@ -1,4 +1,4 @@
-# MAR KMB PROJEK 2 — aplikasi luring (PWA)
+# KMB MAR BUPR — aplikasi luring (PWA)
 
 Antarmuka offline untuk mekanik yang mengerjakan **projek**. Seluruh logika —
 poin, approval, payroll — ada di backend Apps Script, bukan di sini. PWA ini
@@ -10,9 +10,10 @@ hanya layar; ia tidak pernah menghitung uang sendiri.
 Web app    https://script.google.com/macros/s/AKfycbykSslm5SFzAHRGJRLApDVNvR2JvZzW_Y3JEazdXaISJxADGlXwEWXHNg9pwpr4SJ73/exec
 Script     1EMxIxcP1NMqLyjaaFOMbldYBGDdF_mb0OCLjbd3In0PymjTAoUR2XLiM
 Spreadsheet 1_4dluYh821clhVeiUDn2B7auwFPNlTcB56_g4bhFi58
-Cache      mar-projek-v3
+Cache      mar-projek-v4
 IndexedDB  mar_projek_v1 (versi 1)
 Warna      #5E5E5E (abu-abu) — KMB V2 memakai biru #2563EB
+Nama       KMB MAR BUPR; di layar utama HP: MAR BUPR (short_name)
 ```
 
 Kode backend-nya ada di `../MAR-PROJEK-KMB`. Panduan lengkap sistemnya ada di
@@ -31,7 +32,7 @@ Disalin dari `../mar-offline-share` (cetakan bersih PWA KMB V2). Yang diganti:
 | 5 | `app.js:58` | regex `(mar-v\d+)` | `(mar-projek-v\d+)` |
 | 6 | `app.js:143` | regex `^mar-(v\d+)$` | `^mar-(projek-v\d+)$` |
 | 7 | `app.js` + `sw.js` | `indexedDB.open('mar_v2',2)` | `('mar_projek_v1',1)` |
-| 8 | `manifest.json`, `index.html` | merek & warna KMB V2 | Projek KMB, abu-abu |
+| 8 | `manifest.json`, `index.html` | merek & warna KMB V2 | KMB MAR BUPR, abu-abu |
 | 9 | `sw.js` activate | hapus semua cache lain | hanya awalan `mar-projek-v` |
 
 **Titik 1 dan 2 harus selalu sama persis.** Service worker tidak bisa membaca

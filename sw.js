@@ -1,4 +1,4 @@
-var CACHE = 'mar-projek-v3';
+var CACHE = 'mar-projek-v4';
 var ASSETS = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function(e) {
   // cache:'reload' — WAJIB. addAll() memakai cache HTTP biasa, jadi app.js bisa
@@ -67,7 +67,7 @@ function swReq(d, store, mode, fn) {
 function swNotify(body, tag) {
   try {
     if (self.Notification && Notification.permission === 'granted') {
-      return self.registration.showNotification('MAR Offline', {
+      return self.registration.showNotification('MAR BUPR', {
         body: body, icon: './icon-192.png', badge: './icon-192.png',
         // Tanpa tag khusus: seluruh isi jadi penandanya, bukan 16 huruf pertama.
         tag: tag || ('mar-' + body.replace(/\s+/g, ' '))
