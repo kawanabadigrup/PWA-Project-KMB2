@@ -18,7 +18,7 @@ var CONFIG = { API_URL: 'https://script.google.com/macros/s/AKfycbykSslm5SFzAHRG
 // service worker yang benar-benar aktif (lihat syncVersionFromCache).
 // Dengan begitu rilis cukup mengubah CACHE di sw.js; angka di sini tak bisa lagi
 // tertinggal diam-diam seperti dulu (APP_VERSION v26 vs CACHE v34).
-var APP_VERSION = 'projek-v2'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
+var APP_VERSION = 'projek-v3'; // cadangan; nilai sebenarnya dibaca dari CACHE sw.js (syncVersionFromCache)
 
 // ── Pembaruan versi otomatis ────────────────────────────────────────────────
 // sw.js sudah skipWaiting()+clients.claim(), jadi versi baru mengambil alih
@@ -687,7 +687,7 @@ function syncNow(manual) {
       // Sync otomatis tetap patuh TTL supaya tidak boros kuota.
       var perluRefs = manual || refsStale();
       var tasks = [];
-      if (S.role === 'mechanic') { tasks.push(pullWos()); }
+      if (S.role === 'mechanic') { tasks.push(pullWos()); if (timHanyaSaya() && perluRefs) tasks.push(pullRefs()); }
       else {
         tasks.push(pullPending()); tasks.push(pullActive()); tasks.push(pullTransfers()); tasks.push(pullMonitoring());
         // Daftar approved ikut disegarkan saat Refresh DITEKAN — kalau tidak,
@@ -986,8 +986,8 @@ function doLogin() {
         return kvSet('token',t).then(function() { return kvSet('me',S.me); })
           .then(function() { return kvSet('role',S.role); })
           .then(function() {
-            // Hanya non-mekanik (planner/approver) yang perlu refs utk Buat WO.
-            if (S.role !== 'mechanic') return pullRefs().catch(function(){});
+            // Hanya yang boleh Buat WO (approver, mekanik WO mandiri) yang perlu refs.
+            if (bolehBuatWoSaya()) return pullRefs().catch(function(){});
           })
           .then(function() { showScreen('main'); syncNow(false); });
       } else { setLoginLoading(false); toast('❌ '+(r.error||'Token ditolak')); S.token=null; }
@@ -1017,7 +1017,7 @@ function doLogout() {
 
 /* ── Tab ── */
 function switchTab(tab) {
-  if (tab === 'create' && S.role === 'mechanic') return;
+  if (tab === 'create' && !bolehBuatWoSaya()) return;
   S.tab = tab;
   renderAll();
 }
@@ -1103,7 +1103,7 @@ function queueSubmit() {
  *
  * Jamnya diambil dari timer. Karena tidak ada form untuk ditinjau lebih dulu,
  * konfirmasinya WAJIB menyebut durasi yang akan terkirim: sekali masuk antrean,
- * WO berpindah ke meja L1 dan mekanik tak bisa lagi mengubahnya sendiri.
+ * WO berpindah ke meja approver dan mekanik tak bisa lagi mengubahnya sendiri.
  * Timer kosong → arahkan ke Isi Manual, jangan diam-diam mengirim 0 jam.
  */
 // WO yang kirimannya sedang diproses — penjaga tekan-dua-kali. obPut() ke
@@ -1127,7 +1127,7 @@ function kirimLangsung(woId) {
   if (!confirm('Kirim laporan kerja ' + wo.wo_number + '?\n\n' +
                'Durasi: ' + msToJamMenit(totalMs) + '\n' +
                start.toLocaleString('id-ID') + ' → ' + now.toLocaleString('id-ID') + '\n\n' +
-               'Setelah terkirim, WO masuk ke meja L1 dan tidak bisa Anda ubah lagi.\n' +
+               'Setelah terkirim, WO masuk ke meja approver dan tidak bisa Anda ubah lagi.\n' +
                'Perlu mengoreksi jam atau menambah keterangan? Pakai ✍️ Isi Manual.')) return;
   _sedangKirim[woId] = true;
   stopLiveTimer(woId);
@@ -1140,7 +1140,7 @@ function kirimLangsung(woId) {
 
 /* ── M2: Create WO form ── */
 function openCreateForm() {
-  if (S.role === 'mechanic') {
+  if (!bolehBuatWoSaya()) {
     toast('⚠️ Mekanik tidak memiliki akses untuk membuat WO');
     return;
   }
@@ -1178,6 +1178,10 @@ function openCreateForm() {
   S.crossFunc=false; var _cf=document.getElementById('cCrossFunc'); if(_cf) _cf.checked=false;
   addTeamMember();
   onCreateSectionChange();
+  // WO mandiri: tim terkunci pada dirinya sendiri, jadi tambah & lintas fungsi disembunyikan.
+  var _sendiri = timHanyaSaya();
+  ['cTeamAdd','cCrossFuncRow'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=_sendiri?'none':''; });
+  var _th=document.getElementById('cTeamHint'); if(_th) _th.style.display=_sendiri?'block':'none';
   // listeners
   var radios = document.querySelectorAll('input[name="cSec"]');
   for (var ri=0;ri<radios.length;ri++) radios[ri].onchange = onCreateSectionChange;
@@ -1196,6 +1200,10 @@ function onCompChange() {
 }
 /** Poin & target jam saat membuat WO: hanya L2. 1:1 dgn web (BOLEH_LIHAT_POIN). */
 function bolehLihatPoin(){ return S.role === 'superintendent'; }
+/** Boleh Buat WO: approver, atau mekanik berpenanda WO mandiri (dibaca dari ping server). */
+function bolehBuatWoSaya(){ return S.role !== 'mechanic' || !!(S.me && S.me.wo_mandiri); }
+/** Mekanik WO mandiri: timnya hanya dirinya sendiri. Server menegakkannya di createWorkOrder. */
+function timHanyaSaya(){ return S.role === 'mechanic' && !!(S.me && S.me.wo_mandiri); }
 
 function updateCreatePreview(){
   var box=document.getElementById('cPreview'); if(!box) return;
@@ -1627,16 +1635,20 @@ function refreshCreateMechanics() {
       }
       var cocok = (msList.length === 0) || (msList.indexOf(sec) !== -1);
       // Default: hanya mekanik section terpilih. Lintas fungsi → tampilkan semua (dgn tag section).
-      if (!showAll && sec && !cocok) continue;
+      if (timHanyaSaya() && String(mechs[m].mechanic_id) !== String(S.me.mechanic_id)) continue;
+      if (!showAll && !timHanyaSaya() && sec && !cocok) continue;
       var tag = (!cocok && ms) ? ' ['+ms+']' : '';
       rows[r].innerHTML += '<option value="'+esc(mechs[m].mechanic_id)+'">'+esc(mechs[m].mechanic_name)+esc(tag)+'</option>';
     }
-    rows[r].value = cur;
+    rows[r].value = (timHanyaSaya() && !cur) ? String(S.me.mechanic_id) : cur;
   }
 }
 function addTeamMember() {
+  // WO mandiri: satu baris saja, berisi dirinya sendiri, tanpa tombol hapus.
+  if (timHanyaSaya() && document.querySelectorAll('.cTeamSel').length) return;
   var div = document.createElement('div'); div.className = 'teamRow';
   div.innerHTML = '<select class="cTeamSel inp"></select><button type="button" class="mini gray" onclick="this.parentNode.remove()">✕</button>';
+  if (timHanyaSaya()) div.querySelector('button').style.display = 'none';
   document.getElementById('cTeamList').appendChild(div);
   refreshCreateMechanics();
 }
@@ -1865,7 +1877,7 @@ function renderGrupBaris() {
  * "1 baris gagal".
  */
 function simpanGrup() {
-  if (S.role === 'mechanic') {
+  if (!bolehBuatWoSaya()) {
     toast('⚠️ Mekanik tidak memiliki akses untuk membuat WO');
     return;
   }
@@ -1961,7 +1973,7 @@ function _teksOpsi(sel) {
 }
 
 function queueCreate(keepOpen) {
-  if (S.role === 'mechanic') {
+  if (!bolehBuatWoSaya()) {
     toast('⚠️ Mekanik tidak memiliki akses untuk membuat WO');
     return;
   }
@@ -2639,14 +2651,15 @@ function renderAll() {
   document.getElementById('meName').textContent=S.me?(S.me.name||S.me.mechanic_id):'';
   // tabs
   var isApprover = S.role!=='mechanic';
+  var bolehBuat = bolehBuatWoSaya();
   // L1/L2 (approver): sembunyikan tab "WO Saya" — hanya Buat WO + Approval + Monitoring
   if (isApprover && S.tab==='wos') S.tab='approval';
-  // Mekanik: tidak bisa membuat WO — hanya WO Saya
-  if (!isApprover && (S.tab==='approval' || S.tab==='monitor' || S.tab==='create')) S.tab='wos';
-  document.getElementById('tabBar').style.display = isApprover ? 'flex' : 'none';
+  // Mekanik: hanya WO Saya, ditambah Buat WO kalau ia mekanik WO mandiri
+  if (!isApprover && (S.tab==='approval' || S.tab==='monitor' || (S.tab==='create' && !bolehBuat))) S.tab='wos';
+  document.getElementById('tabBar').style.display = (isApprover || bolehBuat) ? 'flex' : 'none';
   document.getElementById('tabWos').style.display = isApprover ? 'none' : '';
   document.getElementById('tabWos').className = 'tab'+(S.tab==='wos'?' active':'');
-  document.getElementById('tabCreate').style.display = isApprover ? '' : 'none';
+  document.getElementById('tabCreate').style.display = bolehBuat ? '' : 'none';
   document.getElementById('tabCreate').className = 'tab'+(S.tab==='create'?' active':'');
   document.getElementById('tabApproval').style.display = isApprover ? '' : 'none';
   document.getElementById('tabApproval').className = 'tab'+(S.tab==='approval'?' active':'');
@@ -2968,7 +2981,7 @@ function kirimSeluruhGrup(groupId) {
   var rinci = siap.map(function(x){ return '• ' + (x.wo.component_name||x.wo.wo_number) + ' — ' + msToJamMenit(x.ms); }).join('\n');
   var pesan = 'Kirim ' + siap.length + ' baris?\n\n' + rinci;
   if (kosong.length) pesan += '\n\n' + kosong.length + ' baris masih 00:00:00 dan TIDAK dikirim — tetap terbuka untuk dikerjakan nanti.';
-  pesan += '\n\nSetelah terkirim, baris itu masuk ke meja L1 dan tidak bisa Anda ubah lagi.';
+  pesan += '\n\nSetelah terkirim, baris itu masuk ke meja approver dan tidak bisa Anda ubah lagi.';
   if (!confirm(pesan)) return;
 
   var now = new Date();
@@ -3010,7 +3023,7 @@ function timKerjaStr(team) {
 }
 
 function renderCreateTab(el) {
-  if (S.role === 'mechanic') {
+  if (!bolehBuatWoSaya()) {
     el.innerHTML = '<div class="empty">Mekanik tidak memiliki akses untuk membuat WO.</div>';
     return;
   }
@@ -4283,6 +4296,12 @@ openDb().then(function() {
     api('ping').then(function(r){
       if (r.success && r.result && r.result.role && r.result.role !== S.role) {
         S.role = r.result.role; kvSet('role', S.role); renderAll();
+      }
+      // Penanda WO mandiri bisa dinyalakan atau dicabut kapan saja di spreadsheet.
+      // Ikut disegarkan, supaya tab Buat WO muncul/hilang tanpa logout.
+      if (r.success && r.result && (!S.me || !!S.me.wo_mandiri !== !!r.result.wo_mandiri)) {
+        if (!S.me) S.me = r.result; else S.me.wo_mandiri = !!r.result.wo_mandiri;
+        kvSet('me', S.me); renderAll();
       }
     }).catch(function(){});
     syncNow(false);

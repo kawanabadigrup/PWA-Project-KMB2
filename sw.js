@@ -1,4 +1,4 @@
-var CACHE = 'mar-projek-v2';
+var CACHE = 'mar-projek-v3';
 var ASSETS = ['./', './index.html', './app.js', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', function(e) {
   // cache:'reload' — WAJIB. addAll() memakai cache HTTP biasa, jadi app.js bisa
@@ -150,7 +150,7 @@ function swCheckPending() {
           var cur = {};
           for (var li = 0; li < list.length; li++) {
             var w = list[li];
-            cur[String(w.id)] = {s: String(w.status), n: String(w.wo_number || w.id)};
+            cur[String(w.id)] = {s: String(w.status), n: String(w.wo_number || w.id), d: !!w.dibuat_sendiri};
           }
           return swReq(d, 'kv', 'readonly', function(s){ return s.get('sw_snap'); }).then(function(prev) {
             var save = function(){ return swReq(d, 'kv', 'readwrite', function(s){ return s.put(cur, 'sw_snap'); }); };
@@ -163,7 +163,8 @@ function swCheckPending() {
                 // bersama — kalimat perintah membuat approver merasa ditugasi
                 // secara pribadi, lalu merasa gagal saat rekannya lebih dulu.
                 if (isApprover) msgs.push('📋 WO masuk antrean ' + stageLbl + ': ' + cur[id].n);
-                else if (cur[id].s === 'pending_mechanic_work') msgs.push('📝 WO baru: ' + cur[id].n);
+                // WO mandiri yang baru dibuat sendiri bukan kabar baru bagi pembuatnya.
+                else if (cur[id].s === 'pending_mechanic_work' && !cur[id].d) msgs.push('📝 WO baru: ' + cur[id].n);
               } else if (prev[id].s !== cur[id].s) {
                 if (cur[id].s === 'approved') msgs.push('✅ ' + cur[id].n + ' disetujui');
                 else if (cur[id].s === 'rejected') msgs.push('❌ ' + cur[id].n + ' ditolak');

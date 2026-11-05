@@ -920,9 +920,10 @@
 
       <div class="fbox wajib">
         <label>Tim Mekanik</label>
-        <label class="chkRow" style="margin:0 0 8px"><input type="checkbox" id="cCrossFunc" onchange="onCrossFuncToggle()">🔓 Tampilkan mekanik semua section (lintas fungsi)</label>
+        <label class="chkRow" id="cCrossFuncRow" style="margin:0 0 8px"><input type="checkbox" id="cCrossFunc" onchange="onCrossFuncToggle()">🔓 Tampilkan mekanik semua section (lintas fungsi)</label>
         <div id="cTeamList"></div>
-        <button class="mini" onclick="addTeamMember()">+ Tambah Mekanik</button>
+        <button class="mini" id="cTeamAdd" onclick="addTeamMember()">+ Tambah Mekanik</button>
+        <div class="sub" id="cTeamHint" style="display:none;margin:6px 0 0">WO ini untuk Anda sendiri. Setelah kerja dikirim, WO langsung masuk approval L2.</div>
       </div>
 
       <!-- METER UNIT — HM atau KM tergantung section.

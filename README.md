@@ -10,7 +10,7 @@ hanya layar; ia tidak pernah menghitung uang sendiri.
 Web app    https://script.google.com/macros/s/AKfycbykSslm5SFzAHRGJRLApDVNvR2JvZzW_Y3JEazdXaISJxADGlXwEWXHNg9pwpr4SJ73/exec
 Script     1EMxIxcP1NMqLyjaaFOMbldYBGDdF_mb0OCLjbd3In0PymjTAoUR2XLiM
 Spreadsheet 1_4dluYh821clhVeiUDn2B7auwFPNlTcB56_g4bhFi58
-Cache      mar-projek-v2
+Cache      mar-projek-v3
 IndexedDB  mar_projek_v1 (versi 1)
 Warna      #5E5E5E (abu-abu) — KMB V2 memakai biru #2563EB
 ```
@@ -81,6 +81,13 @@ https://<hosting>/index.html?token=<token orang itu>
 Token dibuat di backend lewat `TokenAdmin.gs` (`createTokenForUser` atau
 `generateMissingTokens`). Satu token dipakai untuk web app maupun PWA. Token
 disimpan di IndexedDB, jadi cukup dibuka sekali.
+
+## Mekanik WO mandiri
+
+Mekanik yang di backend diberi penanda `wo_mandiri` (kolom di `Config_Mechanics`)
+juga melihat tab **Buat WO**, dengan tim terkunci pada dirinya sendiri. Penandanya
+dibaca dari jawaban `ping`. Aturannya ditegakkan backend, bukan di sini: WO buatannya
+langsung masuk L2 sesudah kerjanya dikirim, dan tim yang berisi orang lain ditolak.
 
 ## Memastikan sambungannya hidup
 
